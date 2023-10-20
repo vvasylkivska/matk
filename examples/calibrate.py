@@ -3,17 +3,17 @@ try:
     import matk
 except:
     try:
-        sys.path.append(os.path.join('..','src'))
+        sys.path.append(os.path.join('..', 'src'))
         import matk
     except ImportError as err:
-        print 'Unable to load MATK module: '+str(err)
+        print('Unable to load MATK module: '+str(err))
 from multiprocessing import freeze_support
 
 def fv(a):
     a0 = a['a0']
     a1 = a['a1']
     a2 = a['a2']
-    X = np.array([1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.])
+    X = np.array([1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12.])
 
     out = a0 / (1. + a1 * np.exp( X * a2))
     return out
@@ -37,4 +37,3 @@ def run():
 if __name__== "__main__":
 	freeze_support()
 	run()
-

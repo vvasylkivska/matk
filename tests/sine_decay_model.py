@@ -11,7 +11,5 @@ def sine_decay(params, x):
     np.seterr(all='ignore')
     model = amp * np.sin(x * omega + shift) * np.exp(-x*x*decay)
 
-    obsnames = ['obs'+str(i) for i in range(1,len(model)+1)]
-    return dict(list(zip(obsnames,model)))
-
-
+    obsnames = ['obs'+str(i) for i in range(1, len(model)+1)]
+    return dict(list(zip(obsnames, model)))

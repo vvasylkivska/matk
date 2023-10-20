@@ -2,6 +2,7 @@
 Example of curve fitting for
 a1*exp(-k1*t) + a2*exp(-k2*t)
 """
+import numpy as np
 from scipy import arange, randn, exp
 #from matplotlib import *
 #from pylab import *
@@ -10,14 +11,14 @@ from scipy import arange, randn, exp
 #from pesting import *
 
 def dbexpl(p):
-    t=arange(0,100,10.)
-    return(p[0]*exp(-p[1]*t) + p[2]*exp(-p[3]*t))
+    t = np.arange(0, 100, 10.)
+    return(p[0]*np.exp(-p[1]*t) + p[2]*np.exp(-p[3]*t))
 
 def create_data():
-    a1,a2 = 1.0, 1.0
-    k1,k2 = 0.05, 0.2
-    t=arange(0,100,10.)
-    data = dbexpl(t,[a1,k1,a2,k2]) + 0.02*randn(len(t))
+    a1, a2 = 1.0, 1.0
+    k1, k2 = 0.05, 0.2
+    t = np.arange(0, 100, 10.)
+    data = dbexpl(t, [a1, k1, a2, k2]) + 0.02*randn(len(t))
     return data
 
 #def residuals(p,data,t):
@@ -41,4 +42,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    

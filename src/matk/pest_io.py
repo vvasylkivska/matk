@@ -1,15 +1,15 @@
 ''' Utilities to handle reading and writing PEST files '''
 import io
-from .lmfit.asteval import Interpreter
 from glob import glob
 import re
+from lmfit import Interpreter
 from numpy import recarray, array
 try:
     from collections import OrderedDict
 except ImportError:
     from .ordereddict import OrderedDict
 
-def tpl_write( pardict, f, outflnm ):
+def tpl_write(pardict, f, outflnm):
     ''' Write model input file using PEST template file
 
         :param pardict: Dictionary of parameter values
@@ -20,13 +20,13 @@ def tpl_write( pardict, f, outflnm ):
         :type outflnm: str
     '''
     # Check if f is a string or file and read in lines
-    if isinstance( f, io.IOBase ):
+    if isinstance(f, io.IOBase):
         t = f.read()
         fnm = f.name
         f.close()
-    elif isinstance( f, str ): 
+    elif isinstance(f, str):
         fnm = f
-        with open( f, 'r') as fh:
+        with open(f, 'r') as fh:
             t = fh.read()
             fh.close()
 
@@ -36,12 +36,12 @@ def tpl_write( pardict, f, outflnm ):
     if k[0] != 'ptf':
         print(fnm+" does not appear to be a PEST template file")
         return
-    else: 
+    else:
         tok = k[1] # Collect parameter identifier character
-        t = re.sub( lh+'\n', '', t)
+        t = re.sub(lh + '\n', '', t)
 
     # Complile regex pattern
-    p = re.compile(tok+'[^'+tok+']*'+tok)
+    p = re.compile(tok + '[^' + tok + ']*' + tok)
     # Find all parameter identifiers in file
     ms = p.findall(t)
     pd = {} # Pattern dictionary
@@ -56,22 +56,22 @@ def tpl_write( pardict, f, outflnm ):
             pd[m] = aeval(pstr)
     # Perform substitutions
     for k,v in list(pd.items()):
-        if isinstance(v,float):
-            t = re.sub( re.escape(k), '%s' % float('%.16g' % v), t)
+        if isinstance(v, float):
+            t = re.sub(re.escape(k), '%s' % float('%.16g' % v), t)
         elif isinstance(v,int):
-            t = re.sub( re.escape(k), str(v), t)
+            t = re.sub(re.escape(k), str(v), t)
         elif isinstance(v,str):
-            t = re.sub( re.escape(k), v, t)
+            t = re.sub(re.escape(k), v, t)
         else:
             print("Error: Substitution value not a float, int, or string")
             return
 
     # Write output file
-    fout = open( outflnm, 'w' )
+    fout = open(outflnm, 'w')
     fout.write(t)
     fout.close()
 
-def read_par_files( *files ):
+def read_par_files(*files):
     ''' Read in one or more PEST parameter files
 
         :param files: Strings of file names, glob characters are supported
@@ -81,7 +81,7 @@ def read_par_files( *files ):
         :returns: parameter names list and numpy array of parameters or recarray of parameters
     '''
 
-    output_format = 'numpy_array' 
+    output_format = 'numpy_array'
 
     ks = OrderedDict()
     ks_save = OrderedDict()
@@ -90,7 +90,7 @@ def read_par_files( *files ):
     names = [] # List to collect parameter names
     # Loop through function arguments
     for fstr in files:
-        fnms = glob( fstr )
+        fnms = glob(fstr)
         # Loop through files from glob of each function argument
         for fnm in fnms:
             with open(fnm, 'r') as f:
@@ -105,10 +105,11 @@ def read_par_files( *files ):
                     names = list(ks.keys())
                     pars.append(list(ks.values()))
                     first = False
-                # Else, check that keys match and put values in correct order according to first file
+                # Else, check that keys match and put values in correct order
+                # according to first file
                 else:
                     if not list(ks_save.keys()) == list(ks.keys()):
-                        print("Parameters in "+fnm+" differs from other files")
+                        print("Parameters in " + fnm + " differs from other files")
                         return 0
                     else:
                         ptemp = []
@@ -121,14 +122,5 @@ def read_par_files( *files ):
     if output_format == 'numpy_array':
         return names, pars
     elif output_format == 'recarray':
-        pars_rc = pars.view(dtype=list(zip(names,['float64']*len(names)))).copy()
+        pars_rc = pars.view(dtype=list(zip(names, ['float64']*len(names)))).copy()
         return pars_rc
-
-
-
-                       
-
-                
-
-                    
-
